@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+    # Kafka configurations
+
+  police-service:
+    build: ../police-service
+    ports:
+      - "8089:8089"
+
+  alert-service:
+    build: ../alert-service
+    ports:
+      - "8080:8080"
+
+  news-service:
+    build: ../news-service
+    ports:
+      - "8087:8087"
+
