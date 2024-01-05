@@ -1,30 +1,68 @@
 version: '3.8'
 
+networks:
+  kafka-net:
+    name: kafka-net
+    driver: bridge
+
 services:
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: zookeeper:3.7.0
+    container_name: zookeeper
+    restart: "no"
+    networks:
+      - kafka-net
     ports:
       - "2181:2181"
 
   kafka:
-    image: wurstmeister/kafka
+    image: obsidiandynamics/kafka
+    container_name: kafka
+    restart: "no"
+    networks:
+      - kafka-net
     ports:
       - "9092:9092"
     environment:
-    # Kafka configurations
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
 
   police-service:
     build: ../police-service
+    image: police-service-image
     ports:
       - "8089:8089"
+    networks:
+      - kafka-net
+    depends_on:
+      - kafka
 
   alert-service:
     build: ../alert-service
+    image: alert-service-image
     ports:
       - "8080:8080"
+    networks:
+      - kafka-net
+    depends_on:
+      - kafka
 
   news-service:
     build: ../news-service
+    image: news-service-image
     ports:
       - "8087:8087"
+    networks:
+      - kafka-net
+    depends_on:
+      - kafka
+
+
 
