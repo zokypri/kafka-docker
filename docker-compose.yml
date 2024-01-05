@@ -64,5 +64,18 @@ services:
     depends_on:
       - kafka
 
-
+  mysql:
+    build:
+      context: ./alert-service  # Path to the directory containing the Dockerfile
+      dockerfile: mysql_dockerfile
+    image: mysql-image
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: AlertService
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - kafka-net
 
