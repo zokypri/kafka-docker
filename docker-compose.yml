@@ -35,7 +35,7 @@ services:
       - zookeeper
 
   police-service:
-    build: ../police-service
+    build: ./police-service
     image: police-service-image
     ports:
       - "8089:8089"
@@ -45,7 +45,7 @@ services:
       - kafka
 
   alert-service:
-    build: ../alert-service
+    build: ./alert-service
     image: alert-service-image
     ports:
       - "8080:8080"
@@ -55,7 +55,7 @@ services:
       - kafka
 
   news-service:
-    build: ../news-service
+    build: ./news-service
     image: news-service-image
     ports:
       - "8087:8087"
