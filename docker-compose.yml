@@ -49,6 +49,7 @@ services:
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     image: alert-service-image
+    restart: on-failure
     ports:
       - "8080:8080"
     networks:
@@ -68,21 +69,18 @@ services:
   mysql:
     build:
       context: ../alert-service
-      dockerfile: mysql_dockerfile
     image: mysql-image
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: pass
-      MYSQL_DATABASE: AlertService
-      MYSQL_USER: root
-      MYSQL_PASSWORD: pass
+      MYSQL_DATABASE: NewsAgency
     networks:
       - kafka-net
     volumes:
       - ./mysql-data:/var/lib/mysql
-      - ./init/createAlerts.sql:/docker-entrypoint-initdb.d/createAlerts.sql  # Adjusted volume mapping
-    command: "--init-file /docker-entrypoint-initdb.d/createAlerts.sql"  # Adjusted command
+      - ./init/initializeDB.sql:/docker-entrypoint-initdb.d/initializeDB.sql  # Adjusted volume mapping
+    command: "--init-file /docker-entrypoint-initdb.d/initializeDB.sql"  # Adjusted command
     depends_on:
       - kafka
 
