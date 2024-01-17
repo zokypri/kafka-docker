@@ -65,11 +65,12 @@ services:
       - "8087:8087"
     networks:
       - kafka-net
+    depends_on:
+      - kafka
+      - mysql
 
   mysql:
-    build:
-      context: ../alert-service
-    image: mysql-image
+    image: mysql:latest
     ports:
       - "3306:3306"
     environment:
