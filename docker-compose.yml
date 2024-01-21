@@ -51,7 +51,7 @@ services:
     image: alert-service-image
     restart: on-failure
     ports:
-      - "8080:8080"
+      - "8070:8070"
     networks:
       - kafka-net
     depends_on:
